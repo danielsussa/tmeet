@@ -1,5 +1,6 @@
 <template>
   <div class="meet">
+    <RecordingIcon :isRecording="meetingName.length > 0"></RecordingIcon>
     <h1 v-if="!meetingName" class="waiting">No meeting in progress<br>Waiting for a new one</h1>
     <div v-if="meetingName">
 
@@ -28,11 +29,13 @@
 import { defineComponent } from 'vue';
 import {WsEvent} from "@/entity/wsevent";
 import {Speach} from "@/entity/meet";
+import RecordingIcon from "@/components/RecordingIcon.vue";
 
 
 export default defineComponent({
   name: 'MeetComponent',
   components: {
+    RecordingIcon
   },
   data() {
     return {
@@ -54,7 +57,7 @@ export default defineComponent({
 
           this.speeches.push({
             speaker: data.name,
-            time:    `${date.getHours()}:${date.getMinutes()}`,
+            time:    date.toLocaleTimeString('en', {hour: "2-digit", minute: "2-digit"}),
             texts: []
           })
         }
@@ -82,6 +85,9 @@ export default defineComponent({
 </script>
 
 <style scoped>
+.meet{
+  padding: 10px;
+}
 .time {
   font-size: 16px;
   color: #314856;

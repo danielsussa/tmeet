@@ -37,6 +37,5 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #8caec5;
-  margin-top: 60px;
 }
 </style>
