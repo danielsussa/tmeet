@@ -13,9 +13,11 @@
   },
   "main": "background.js",
   "dependencies": {
+    "@grammarly/editor-sdk-vue": "^2.1.0",
     "@jakriese/vue3-event-bus": "github:jakriese/vue3-event-bus",
     "@logdna/tail-file": "^3.0.0",
     "core-js": "^3.8.3",
+    "electron-store": "^8.1.0",
     "fs": "^0.0.1-security",
     "mitt": "^3.0.0",
     "node-polyfill-webpack-plugin": "^2.0.1",

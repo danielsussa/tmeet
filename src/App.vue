@@ -9,7 +9,8 @@ import * as electron from "electron";
 import IpcRendererEvent = electron.IpcRendererEvent;
 import {WsEvent} from "@/entity/wsevent";
 import Meet from "@/components/Meet.vue";
-
+import { init } from '@grammarly/editor-sdk-vue/v2'
+import * as consts from '@/entity/grammarly';
 
 export default defineComponent({
   name: 'App',
@@ -17,7 +18,12 @@ export default defineComponent({
     Meet,
   },
   setup() {
-    electron.ipcRenderer.send("read-all", "dad")
+    init(consts.Grammarly.CLIENT_ID).then((grammarly) => {
+      electron.ipcRenderer.on("grammarly:handleOAuthCallback", function (event : IpcRendererEvent, url: string) {
+        grammarly.handleOAuthCallback(url);
+      })
+    });
+
     electron.ipcRenderer.on("new-meet-event", function (event : IpcRendererEvent, wsEvent: WsEvent) {
       document.dispatchEvent(new MessageEvent('eventHistory-listener', {
         data: wsEvent

@@ -1,5 +1,6 @@
 <template>
   <div class="meet">
+
     <RecordingIcon :isRecording="meetingName.length > 0"></RecordingIcon>
     <h1 v-if="!meetingName" class="waiting">No meeting in progress<br>Waiting for a new one</h1>
     <div v-if="meetingName">
@@ -7,15 +8,19 @@
       <h1>Meeting in progress: {{meetingName}}</h1>
       <p style="margin-top: -20px">Current time: {{meetingTime}}</p>
 
-      <div :class="{ odd: index%2 === 0 }" class="speach" v-for="(item, index) in speeches" :key="index">
-        <h2><span class="time">{{item.time}}</span> {{item.speaker}}</h2>
-        <div style="padding-left: 10px">
-        <span v-for="(text, idxTxt) in item.texts" :key="idxTxt">
-          {{text}}
-        </span>
+      <Grammarly :clientId="clientId">
+
+        <div :class="{ odd: index%2 === 0 }" class="speach" v-for="(item, index) in speeches" :key="index" autofocus>
+          <h2><span class="time">{{item.time}}</span> {{item.speaker}}</h2>
+          <GrammarlyEditorPlugin :client-id="clientId" :config="grammarlyConfig">
+            <div style="padding-left: 10px" contenteditable="true">
+              {{standardText(item)}}
+            </div>
+          </GrammarlyEditorPlugin>
+
         </div>
 
-      </div>
+      </Grammarly>
 
     </div>
 
@@ -25,26 +30,50 @@
   </div>
 </template>
 
+
+
 <script lang="ts">
 import { defineComponent } from 'vue';
 import {WsEvent} from "@/entity/wsevent";
 import {Speach} from "@/entity/meet";
 import RecordingIcon from "@/components/RecordingIcon.vue";
+import {Grammarly, GrammarlyEditorPlugin} from "@grammarly/editor-sdk-vue";
+import * as consts from '@/entity/grammarly';
 
 
 export default defineComponent({
   name: 'MeetComponent',
   components: {
-    RecordingIcon
+    Grammarly,
+    RecordingIcon,
+    GrammarlyEditorPlugin
   },
   data() {
     return {
+      clientId: consts.Grammarly.CLIENT_ID,
       meetingName: '',
       meetingTime: '',
+      grammarlyConfig: {
+        activation: "immediate",
+        oauthRedirectUri: "example://grammarly-auth",
+        autocomplete: "on",
+        toneDetector: "on"
+      },
       speeches: [] as Speach[]
     }
   },
+  methods: {
+    standardText(s: Speach) {
+      let fullText = ''
+      for (const text of s.texts) {
+        fullText += text
+      }
+      return fullText
+    }
+  },
   mounted() {
+    this.meetingName = "teste name"
+
     document.addEventListener('eventHistory-listener', (e) => {
       const event = e as MessageEvent;
       const data = event.data as WsEvent
@@ -103,4 +132,8 @@ export default defineComponent({
 .odd{
   background-color: #1e282d;
 }
+:focus-within {
+  /*outline: none;*/
+}
+
 </style>
