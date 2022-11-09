@@ -1,0 +1,10 @@
+{
+  "name": "TMeet",
+  "description": "Record Google Meet Transcripts",
+  "version": "3",
+  "content_scripts": [{
+    "matches": ["https://meet.google.com/*"],
+    "js": ["background.js"]
+  }],
+  "manifest_version": 2
+}
